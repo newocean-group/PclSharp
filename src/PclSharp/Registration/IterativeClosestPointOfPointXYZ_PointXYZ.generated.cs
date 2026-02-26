@@ -52,10 +52,21 @@ namespace PclSharp.Registration
 		public static extern void registration_icp_pointxyz_pointxyz_setInputTarget(IntPtr ptr, IntPtr value);
 		[DllImport(Native.DllName, CallingConvention=Native.CallingConvention)]
 		public static extern IntPtr registration_icp_pointxyz_pointxyz_getInputTarget(IntPtr ptr);
+		[DllImport(Native.DllName, CallingConvention=Native.CallingConvention)]
+		public static extern bool registration_icp_pointxyz_pointxyz_hasConverged(IntPtr ptr);
+		[DllImport(Native.DllName, CallingConvention=Native.CallingConvention)]
+		public static extern double registration_icp_pointxyz_pointxyz_getFitnessScore(IntPtr ptr);
+		[DllImport(Native.DllName, CallingConvention=Native.CallingConvention)]
+		public static extern void registration_icp_pointxyz_pointxyz_getFinalTransformation(IntPtr ptr, IntPtr output);
 	}
 
 	public class IterativeClosestPointOfPointXYZ_PointXYZ : IterativeClosestPoint<PointXYZ, PointXYZ>
 	{
+		public IterativeClosestPointOfPointXYZ_PointXYZ()
+		{
+			_ptr = Invoke.registration_icp_pointxyz_pointxyz_ctor();
+		}
+
 		public override int MaximumIterations
 		{ 
 			get { return Invoke.registration_icp_pointxyz_pointxyz_getMaximumIterations(_ptr); }
@@ -89,12 +100,38 @@ namespace PclSharp.Registration
         public override PointCloud<PointXYZ> InputSource
 		{
 			get { return new PointCloudOfXYZ(Invoke.registration_icp_pointxyz_pointxyz_getInputSource(_ptr), true); }
-			set { Invoke.registration_icp_pointxyz_pointxyz_setInputSource(_ptr, value); }
+			set
+			{
+				if (value == null) throw new ArgumentNullException(nameof(value));
+				if (_ptr == IntPtr.Zero) throw new ObjectDisposedException(GetType().Name);
+				Invoke.registration_icp_pointxyz_pointxyz_setInputSource(_ptr, value.Ptr);
+			}
 		}
         public override PointCloud<PointXYZ> InputTarget
 		{
 			get { return new PointCloudOfXYZ(Invoke.registration_icp_pointxyz_pointxyz_getInputTarget(_ptr), true); }
-			set { Invoke.registration_icp_pointxyz_pointxyz_setInputTarget(_ptr, value); }
+			set
+			{
+				if (value == null) throw new ArgumentNullException(nameof(value));
+				if (_ptr == IntPtr.Zero) throw new ObjectDisposedException(GetType().Name);
+				Invoke.registration_icp_pointxyz_pointxyz_setInputTarget(_ptr, value.Ptr);
+			}
+		}
+
+		public override bool HasConverged
+			=> Invoke.registration_icp_pointxyz_pointxyz_hasConverged(_ptr);
+
+		public override double FitnessScore
+			=> Invoke.registration_icp_pointxyz_pointxyz_getFitnessScore(_ptr);
+
+		public override Matrix4f FinalTransformation
+		{
+			get
+			{
+				var m = new Matrix4f();
+				Invoke.registration_icp_pointxyz_pointxyz_getFinalTransformation(_ptr, m.Ptr);
+				return m;
+			}
 		}
 
 		public override double TransformationRotationEpsilon

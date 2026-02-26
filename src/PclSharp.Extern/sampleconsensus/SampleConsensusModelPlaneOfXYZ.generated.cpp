@@ -5,12 +5,12 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include "pcl\sample_consensus\sac_model_plane.h"
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef SampleConsensusModelPlane<PointXYZ> sac_plane;
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
 
 #ifdef __cplusplus  
 extern "C" {  // only need to export C interface if  
@@ -19,10 +19,11 @@ extern "C" {  // only need to export C interface if
 
 EXPORT(SampleConsensusModelPlane<PointXYZ>*) sampleconsensusmodel_plane_xyz_ctor_indices(PointCloud<PointXYZ>* cloud, vector<int>* indices, bool random)
 {
+	auto cloud_ptr = std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {});
 	if (indices)
-		return new SampleConsensusModelPlane<PointXYZ>(boost_cloud(boost_cloud(), cloud), *indices, random);
+		return new SampleConsensusModelPlane<PointXYZ>(cloud_ptr, *indices, random);
 	else
-		return new SampleConsensusModelPlane<PointXYZ>(boost_cloud(boost_cloud(), cloud), random);
+		return new SampleConsensusModelPlane<PointXYZ>(cloud_ptr, random);
 }
 
 EXPORT(void) sampleconsensusmodel_plane_xyz_delete(SampleConsensusModelPlane<PointXYZ>** ptr)
@@ -35,7 +36,7 @@ EXPORT(void) sampleconsensusmodel_plane_xyz_setIndices(SampleConsensusModelPlane
 { ptr->setIndices(*indices); }
 
 EXPORT(void) sampleconsensusmodel_plane_xyz_setInputCloud(SampleConsensusModelPlane<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputCloud(boost_cloud(boost_cloud(), cloud)); }
+{ ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(void) sampleconsensusmodel_plane_xyz_selectWithinDistance(SampleConsensusModelPlane<PointXYZ>* ptr, Eigen::VectorXf* modelCoefficients, double distance, vector<int>* inliers)
 { ptr-> selectWithinDistance(*modelCoefficients, distance, *inliers); }

@@ -4,12 +4,11 @@
 
 #include "pcl\point_types.h"
 #include <pcl/segmentation/sac_segmentation.h>
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
-typedef boost::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,11 +27,11 @@ EXPORT(void) segmentation_sacsegmentation_xyz_delete(SACSegmentation<PointXYZ>**
 
 EXPORT(void) segmentation_sacsegmentation_xyz_setInputCloud(SACSegmentation<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
+	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {}));
 }
 
 EXPORT(void) segmentation_sacsegmentation_xyz_setIndices(SACSegmentation<PointXYZ>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
+{ ptr->setIndices(std::shared_ptr<vector<int>>(indices, [](vector<int>*) {})); }
 
 EXPORT(void) segmentation_sacsegmentation_xyz_segment(SACSegmentation<PointXYZ>* ptr, PointIndices* inliers, ModelCoefficients* coefficients)
 {

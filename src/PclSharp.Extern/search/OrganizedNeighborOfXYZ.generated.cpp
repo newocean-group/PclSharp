@@ -5,14 +5,13 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/search/organized.h>
+#include <memory>
 
 using namespace pcl::search;
 using namespace std;
 
 typedef pcl::PointXYZ PointXYZ;
 typedef OrganizedNeighbor<PointXYZ> search_t;
-typedef boost::shared_ptr<pcl::PointCloud<PointXYZ>> boost_cloud;
-
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -30,7 +29,7 @@ EXPORT(void) search_organizedNeighbor_xyz_delete(search_t** ptr)
 
 EXPORT(void) search_organizedNeighbor_xyz_setInputCloud(OrganizedNeighbor<PointXYZ>* ptr, pcl::PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
+	ptr->setInputCloud(std::shared_ptr<pcl::PointCloud<PointXYZ>>(cloud, [](pcl::PointCloud<PointXYZ>*) {}));
 }
 
 EXPORT(void) search_organizedNeighbor_xyz_setSortedResults(OrganizedNeighbor<PointXYZ>* ptr, int value)

@@ -5,14 +5,12 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/features/fpfh.h>
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef FPFHEstimation<PointXYZ, Normal, FPFHSignature33> cpp_wrapper;
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
-typedef boost::shared_ptr<PointCloud<Normal>> boost_norms;
-typedef boost::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,16 +28,16 @@ EXPORT(void) features_fpfhestimation_pointxyzandnormal_delete(cpp_wrapper** ptr)
 }
 
 EXPORT(void) features_fpfhestimation_pointxyzandnormal_setInputCloud(FPFHEstimation<PointXYZ, Normal, FPFHSignature33>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputCloud(boost_cloud(boost_cloud(), cloud)); }
+{ ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(void) features_fpfhestimation_pointxyzandnormal_setIndices(FPFHEstimation<PointXYZ, Normal, FPFHSignature33>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
+{ ptr->setIndices(std::shared_ptr<std::vector<int>>(indices, [](std::vector<int>*) {})); }
 
 EXPORT(void) features_fpfhestimation_pointxyzandnormal_compute(FPFHEstimation<PointXYZ, Normal, FPFHSignature33>* ptr, PointCloud<FPFHSignature33>* cloud)
 { ptr->compute(*cloud); }
 
 EXPORT(void) features_fpfhestimation_pointxyzandnormal_setInputNormals(FPFHEstimation<PointXYZ, Normal, FPFHSignature33>* ptr, PointCloud<Normal>* normals)
-{ ptr->setInputNormals(boost_norms(boost_norms(), normals)); }
+{ ptr->setInputNormals(std::shared_ptr<PointCloud<Normal>>(normals, [](PointCloud<Normal>*) {})); }
 
 EXPORT(void) features_fpfhestimation_pointxyzandnormal_setKSearch(FPFHEstimation<PointXYZ, Normal, FPFHSignature33>* ptr, int value)
 { ptr->setKSearch(value); }

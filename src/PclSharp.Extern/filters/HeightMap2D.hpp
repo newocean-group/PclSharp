@@ -1,7 +1,7 @@
 #pragma once
 
-#include <pcl/filters/boost.h>
 #include <pcl/filters/filter.h>
+#include <memory>
 #include <map>
 #include <unordered_map>
 
@@ -73,8 +73,8 @@ namespace pcl
 
 		public:
 			typedef pcl::PointCloud<PointT> PointCloud;
-			typedef boost::shared_ptr<PointCloud> PointCloudPtr;
-			typedef boost::shared_ptr<const PointCloud> PointCloudConstPtr;
+			typedef std::shared_ptr<PointCloud> PointCloudPtr;
+			typedef std::shared_ptr<const PointCloud> PointCloudConstPtr;
 
 			HeightMap2D() :
 				buckets_(),
@@ -180,13 +180,13 @@ namespace pcl
 					{
 						bool good_maximum = true;
 
-						Vector3f max_p = input_->points[max_buckets_[i].idx].getVector3fMap();
+						Vector3f max_p = this->getInputCloud()->points[max_buckets_[i].idx].getVector3fMap();
 						float t = max_p.dot(normal) + ground_coeffs_[3];
 						max_p -= normal * t; //max_p is projected onto the ground plane.
 
 						for (int j = i - 1; j >= 0 && good_maximum; j--)
 						{
-							Vector3f previous_max_p = input_->points[max_buckets_[j].idx].getVector3fMap();
+							Vector3f previous_max_p = this->getInputCloud()->points[max_buckets_[j].idx].getVector3fMap();
 							t = previous_max_p.dot(normal) + ground_coeffs_[3];
 							previous_max_p -= normal * t;
 
@@ -208,7 +208,7 @@ namespace pcl
 			void filter()
 			{
 				buckets_.clear();
-				buckets_.reserve(indices_->size());
+				buckets_.reserve(this->getIndices()->size());
 
 				//Vector2i bmin_(INT_MAX, INT_MAX);
 				//Vector2i bmax_(-INT_MAX, -INT_MAX);
@@ -221,9 +221,9 @@ namespace pcl
 				pxa.normalize();
 				Vector3f pya = normal.cross(pxa);
 
-				for (auto it = indices_->begin(); it < indices_->end(); it++)
+				for (auto it = this->getIndices()->begin(); it < this->getIndices()->end(); it++)
 				{
-					Vector3f p = input_->operator[](*it).getVector3fMap();
+					Vector3f p = this->getInputCloud()->operator[](*it).getVector3fMap();
 
 					auto pp = Vector2f(p.dot(pxa), p.dot(pya));
 					int iix = pp[0] / bin_size_;

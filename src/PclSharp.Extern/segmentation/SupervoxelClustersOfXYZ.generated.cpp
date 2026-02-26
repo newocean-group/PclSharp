@@ -8,7 +8,6 @@
 using namespace pcl;
 using namespace std;
 
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
 typedef map<uint32_t, Supervoxel<PointXYZ>::Ptr> SupervoxelClusters;
 
 #ifdef __cplusplus

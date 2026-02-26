@@ -4,12 +4,9 @@
 
 #include <pcl/point_types.h>
 #include <pcl/common/pca.h>
-
+#include <memory>
 using namespace pcl;
 using namespace std;
-
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
-typedef boost::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,19 +22,25 @@ EXPORT(void) pca_xyz_delete(PCA<PointXYZ>** ptr)
 }
 
 EXPORT(void) pca_xyz_setInputCloud(PCA<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputCloud(boost_cloud(boost_cloud(), cloud)); }
+{ ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(void) pca_xyz_setIndices(PCA<PointXYZ>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
+{ ptr->setIndices(std::shared_ptr<std::vector<int>>(indices, [](std::vector<int>*) {})); }
 
 EXPORT(void) pca_xyz_update(PCA<PointXYZ>* ptr, PointXYZ* input, PCA<PointXYZ>::FLAG flag)
 { ptr->update(*input, flag); }
 
-EXPORT(Eigen::Vector4f) pca_xyz_getMean(PCA<PointXYZ>* ptr)
-{ return ptr->getMean(); }
+EXPORT(void) pca_xyz_getMean(PCA<PointXYZ>* ptr, float* out_xyzw)
+{
+	auto v = ptr->getMean();
+	out_xyzw[0] = v[0]; out_xyzw[1] = v[1]; out_xyzw[2] = v[2]; out_xyzw[3] = v[3];
+}
 
-EXPORT(Eigen::Vector3f) pca_xyz_getEigenValues(PCA<PointXYZ>* ptr)
-{ return ptr->getEigenValues(); }
+EXPORT(void) pca_xyz_getEigenValues(PCA<PointXYZ>* ptr, float* out_xyz)
+{
+	auto v = ptr->getEigenValues();
+	out_xyz[0] = v[0]; out_xyz[1] = v[1]; out_xyz[2] = v[2];
+}
 
 #ifdef __cplusplus  
 }

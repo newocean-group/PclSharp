@@ -5,12 +5,12 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/filters/voxel_grid.h>
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef VoxelGrid<PointXYZ> voxel_grid;
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,18 +34,18 @@ EXPORT(void) filters_voxelGrid_xyz_filter(VoxelGrid<PointXYZ>* ptr, PointCloud<P
 
 EXPORT(void) filters_voxelGrid_xyz_setInputCloud(VoxelGrid<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
+	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {}));
 }
 
 EXPORT(void) filters_voxelGrid_xyz_setIndices(VoxelGrid<PointXYZ>* ptr, vector<int>* indices)
 {
-	ptr->setIndices(boost::shared_ptr<vector<int>>(boost::shared_ptr<vector<int>>(), indices));
+	ptr->setIndices(std::shared_ptr<vector<int>>(indices, [](vector<int>*) {}));
 }
 
-EXPORT(PointXYZ) filters_voxelGrid_xyz_getLeafSize(VoxelGrid<PointXYZ>* ptr)
+EXPORT(void) filters_voxelGrid_xyz_getLeafSize(VoxelGrid<PointXYZ>* ptr, float* x, float* y, float* z)
 {
 	auto size = ptr->getLeafSize();
-	return PointXYZ(size[0], size[1], size[2]);
+	*x = size[0]; *y = size[1]; *z = size[2];
 }
 
 EXPORT(void) filters_voxelGrid_xyz_setLeafSize(VoxelGrid<PointXYZ>* ptr, PointXYZ size)
@@ -75,17 +75,29 @@ EXPORT(void) filters_voxelGrid_xyz_setMinimumPointsNumberPerVoxel(VoxelGrid<Poin
 EXPORT(int) filters_voxelGrid_xyz_getMinimumPointsNumberPerVoxel(VoxelGrid<PointXYZ>* ptr)
 { return ptr->getMinimumPointsNumberPerVoxel(); }
 
-EXPORT(Eigen::Vector3i) filters_voxelGrid_xyz_getMinBoxCoordinates(VoxelGrid<PointXYZ>* ptr)
-{ return ptr->getMinBoxCoordinates(); }
+EXPORT(void) filters_voxelGrid_xyz_getMinBoxCoordinates(VoxelGrid<PointXYZ>* ptr, int* x, int* y, int* z)
+{
+	auto v = ptr->getMinBoxCoordinates();
+	*x = v[0]; *y = v[1]; *z = v[2];
+}
 
-EXPORT(Eigen::Vector3i) filters_voxelGrid_xyz_getMaxBoxCoordinates(VoxelGrid<PointXYZ>* ptr)
-{ return ptr->getMaxBoxCoordinates(); }
+EXPORT(void) filters_voxelGrid_xyz_getMaxBoxCoordinates(VoxelGrid<PointXYZ>* ptr, int* x, int* y, int* z)
+{
+	auto v = ptr->getMaxBoxCoordinates();
+	*x = v[0]; *y = v[1]; *z = v[2];
+}
 
-EXPORT(Eigen::Vector3i) filters_voxelGrid_xyz_getNrDivisions(VoxelGrid<PointXYZ>* ptr)
-{ return ptr->getNrDivisions(); }
+EXPORT(void) filters_voxelGrid_xyz_getNrDivisions(VoxelGrid<PointXYZ>* ptr, int* x, int* y, int* z)
+{
+	auto v = ptr->getNrDivisions();
+	*x = v[0]; *y = v[1]; *z = v[2];
+}
 
-EXPORT(Eigen::Vector3i) filters_voxelGrid_xyz_getDivisionMultiplier(VoxelGrid<PointXYZ>* ptr)
-{ return ptr->getDivisionMultiplier(); }
+EXPORT(void) filters_voxelGrid_xyz_getDivisionMultiplier(VoxelGrid<PointXYZ>* ptr, int* x, int* y, int* z)
+{
+	auto v = ptr->getDivisionMultiplier();
+	*x = v[0]; *y = v[1]; *z = v[2];
+}
 
 #ifdef __cplusplus  
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "export.h"
-
 #include "pcl\point_types.h"
 
 using namespace pcl;

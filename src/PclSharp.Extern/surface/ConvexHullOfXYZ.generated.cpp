@@ -5,12 +5,13 @@
 #include <pcl/pcl_base.h>
 #include <pcl/point_types.h>
 #include <pcl/surface/convex_hull.h>
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
-typedef boost::shared_ptr<pcl::search::Search<PointXYZ>> search_ptr;
+typedef std::shared_ptr<PointCloud<PointXYZ>> std_cloud;
+typedef std::shared_ptr<pcl::search::Search<PointXYZ>> search_ptr;
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,13 +29,13 @@ EXPORT(void) surface_convexhull_xyz_delete(ConvexHull<PointXYZ>** ptr)
 }
 
 EXPORT(void) surface_convexhull_xyz_setInputCloud(ConvexHull<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputCloud(boost_cloud(boost_cloud(), cloud)); }
+{ ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(void) surface_convexhull_xyz_setIndices(ConvexHull<PointXYZ>* ptr, vector<int>* indices)
-{ ptr->setIndices(boost::shared_ptr<vector<int>>(boost::shared_ptr<vector<int>>(), indices)); }
+{ ptr->setIndices(std::shared_ptr<vector<int>>(indices, [](vector<int>*) {})); }
 
 EXPORT(void) surface_convexhull_xyz_setSearchMethod(ConvexHull<PointXYZ>* ptr, pcl::search::Search<PointXYZ>* search)
-{ ptr->setSearchMethod(search_ptr(search_ptr(), search)); }
+{ ptr->setSearchMethod(std::shared_ptr<pcl::search::Search<PointXYZ>>(search, [](pcl::search::Search<PointXYZ>*) {})); }
 
 EXPORT(void) surface_convexhull_xyz_reconstruct(ConvexHull<PointXYZ>* ptr, PolygonMesh* mesh)
 { ptr->reconstruct(*mesh); }

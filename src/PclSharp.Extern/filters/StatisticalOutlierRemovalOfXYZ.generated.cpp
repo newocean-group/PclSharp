@@ -5,12 +5,12 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef StatisticalOutlierRemoval<PointXYZ> filter_t;
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,12 +34,12 @@ EXPORT(void) filters_statisticalOutlierRemoval_xyz_filter(StatisticalOutlierRemo
 
 EXPORT(void) filters_statisticalOutlierRemoval_xyz_setInputCloud(StatisticalOutlierRemoval<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
+	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {}));
 }
 
 EXPORT(void) filters_statisticalOutlierRemoval_xyz_setIndices(StatisticalOutlierRemoval<PointXYZ>* ptr, vector<int>* indices)
 {
-	ptr->setIndices(boost::shared_ptr<vector<int>>(boost::shared_ptr<vector<int>>(), indices));
+	ptr->setIndices(std::shared_ptr<vector<int>>(indices, [](vector<int>*) {}));
 }
 
 EXPORT(void) filters_statisticalOutlierRemoval_xyz_setMeanK(StatisticalOutlierRemoval<PointXYZ>* ptr, int value)

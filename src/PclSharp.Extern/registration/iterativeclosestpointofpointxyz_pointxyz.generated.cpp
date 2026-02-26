@@ -3,14 +3,11 @@
 
 #include <pcl/point_types.h>
 #include <pcl/registration/icp.h>
+#include <memory>
 
 using namespace pcl;
 using namespace pcl::registration;
 using namespace std;
-
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_src;
-typedef boost::shared_ptr<PointCloud<PointXYZ>> boost_tgt;
-typedef boost::shared_ptr<vector<int>> boost_indices;
 typedef Eigen::Matrix<float, 4, 4> Matrix4;
 typedef IterativeClosestPoint<PointXYZ, PointXYZ> classType;
 
@@ -58,17 +55,24 @@ EXPORT(double) registration_icp_pointxyz_pointxyz_getEuclideanFitnessEpsilon(Ite
 { return ptr->getEuclideanFitnessEpsilon(); }
 
 EXPORT(void) registration_icp_pointxyz_pointxyz_setInputSource(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputSource(boost_src(boost_src(), cloud)); }
+{ ptr->setInputSource(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(PointCloud<PointXYZ>*) registration_icp_pointxyz_pointxyz_getInputSource(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr)
-{ return boost::const_pointer_cast<PointCloud<PointXYZ>>(ptr->getInputSource()).get(); }
+{ return std::const_pointer_cast<PointCloud<PointXYZ>>(ptr->getInputSource()).get(); }
 
 
 EXPORT(void) registration_icp_pointxyz_pointxyz_setInputTarget(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputTarget(boost_tgt(boost_tgt(), cloud)); }
+{ ptr->setInputTarget(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
 
 EXPORT(PointCloud<PointXYZ>*) registration_icp_pointxyz_pointxyz_getInputTarget(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr)
-{ return boost::const_pointer_cast<PointCloud<PointXYZ>>(ptr->getInputTarget()).get(); }
+{ return std::const_pointer_cast<PointCloud<PointXYZ>>(ptr->getInputTarget()).get(); }
+
+EXPORT(bool) registration_icp_pointxyz_pointxyz_hasConverged(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr)
+{ return ptr->hasConverged(); }
+EXPORT(double) registration_icp_pointxyz_pointxyz_getFitnessScore(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr)
+{ return ptr->getFitnessScore(); }
+EXPORT(void) registration_icp_pointxyz_pointxyz_getFinalTransformation(IterativeClosestPoint<PointXYZ, PointXYZ>* ptr, Matrix4* output)
+{ *output = ptr->getFinalTransformation(); }
 
 #ifdef __cplusplus  
 }
