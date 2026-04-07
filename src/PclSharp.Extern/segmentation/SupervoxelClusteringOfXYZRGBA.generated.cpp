@@ -4,10 +4,13 @@
 
 #include "pcl\point_types.h"
 #include <pcl/segmentation/supervoxel_clustering.h>
-#include <memory>
 
 using namespace pcl;
 using namespace std;
+
+typedef std::shared_ptr<PointCloud<PointXYZRGBA>> boost_cloud;
+typedef std::shared_ptr<PointCloud<Normal>> normal_cloud;
+typedef std::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,15 +29,15 @@ EXPORT(void) segmentation_supervoxelclustering_xyzrgba_delete(SupervoxelClusteri
 
 EXPORT(void) segmentation_supervoxelclustering_xyzrgba_setInputCloud(SupervoxelClustering<PointXYZRGBA>* ptr, PointCloud<PointXYZRGBA>* cloud)
 {
-	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZRGBA>>(cloud, [](PointCloud<PointXYZRGBA>*) {}));
+	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
 }
 
 EXPORT(void) segmentation_supervoxelclustering_xyzrgba_setIndices(SupervoxelClustering<PointXYZRGBA>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(std::shared_ptr<std::vector<int>>(indices, [](std::vector<int>*) {})); }
+{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
 
 EXPORT(void) segmentation_supervoxelclustering_xyzrgba_setNormalCloud(SupervoxelClustering<PointXYZRGBA>* ptr, PointCloud<Normal>* cloud)
 {
-	ptr->setNormalCloud(std::shared_ptr<PointCloud<Normal>>(cloud, [](PointCloud<Normal>*) {}));
+	ptr->setNormalCloud(normal_cloud(normal_cloud(), cloud));
 }
 
 EXPORT(void) segmentation_supervoxelclustering_xyzrgba_extract(SupervoxelClustering<PointXYZRGBA>* ptr, map<uint32_t, Supervoxel<PointXYZRGBA>::Ptr>* clusters)

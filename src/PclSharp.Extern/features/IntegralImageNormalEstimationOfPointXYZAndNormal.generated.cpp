@@ -5,12 +5,13 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/features/integral_image_normal.h>
-#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef IntegralImageNormalEstimation<PointXYZ, Normal> integral_image;
+typedef std::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
+typedef std::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus  
 extern "C" {  // only need to export C interface if  
@@ -50,10 +51,10 @@ EXPORT(void) features_integralImageNormalEstimation_pointxyzandnormal_setNormalS
 }
 
 EXPORT(void) features_integralImageNormalEstimation_pointxyzandnormal_setInputCloud(IntegralImageNormalEstimation<PointXYZ, Normal>* ptr, PointCloud<PointXYZ>* cloud)
-{ ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {})); }
+{ ptr->setInputCloud(boost_cloud(boost_cloud(), cloud)); }
 
 EXPORT(void) features_integralImageNormalEstimation_pointxyzandnormal_setIndices(IntegralImageNormalEstimation<PointXYZ, Normal>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(std::shared_ptr<std::vector<int>>(indices, [](std::vector<int>*) {})); }
+{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
 
 EXPORT(void) features_integralImageNormalEstimation_pointxyzandnormal_compute(IntegralImageNormalEstimation<PointXYZ, Normal>* ptr, PointCloud<Normal>* cloud)
 { ptr->compute(*cloud); }

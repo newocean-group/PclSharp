@@ -4,10 +4,13 @@
 
 #include "pcl\point_types.h"
 #include <pcl/segmentation/extract_clusters.h>
-#include <memory>
 
 using namespace pcl;
 using namespace std;
+
+typedef std::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
+typedef std::shared_ptr<pcl::search::Search<PointXYZ>> search_ptr;
+typedef std::shared_ptr<vector<int>> boost_indices;
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,15 +29,15 @@ EXPORT(void) segmentation_euclideanclusterextraction_xyz_delete(EuclideanCluster
 
 EXPORT(void) segmentation_euclideanclusterextraction_xyz_setInputCloud(EuclideanClusterExtraction<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {}));
+	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
 }
 
 EXPORT(void) segmentation_euclideanclusterextraction_xyz_setIndices(EuclideanClusterExtraction<PointXYZ>* ptr, std::vector<int>* indices)
-{ ptr->setIndices(std::shared_ptr<std::vector<int>>(indices, [](std::vector<int>*) {})); }
+{ ptr->setIndices(boost_indices(boost_indices(), indices)); }
 
 EXPORT(void) segmentation_euclideanclusterextraction_xyz_setSearchMethod(EuclideanClusterExtraction<PointXYZ>* ptr, pcl::search::Search<PointXYZ>* search)
 {
-	ptr->setSearchMethod(std::shared_ptr<pcl::search::Search<PointXYZ>>(search, [](pcl::search::Search<PointXYZ>*) {}));
+	ptr->setSearchMethod(search_ptr(search_ptr(), search));
 }
 
 EXPORT(void) segmentation_euclideanclusterextraction_xyz_extract(EuclideanClusterExtraction<PointXYZ>* ptr, vector<PointIndices>* clusters)

@@ -5,12 +5,12 @@
 #include "pcl\pcl_base.h"
 #include "pcl\point_types.h"
 #include <pcl/filters/extract_indices.h>
-#include <memory>
 
 using namespace pcl;
 using namespace std;
 
 typedef ExtractIndices<PointXYZ> filter_t;
+typedef std::shared_ptr<PointCloud<PointXYZ>> boost_cloud;
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,12 +34,12 @@ EXPORT(void) filters_extractIndices_xyz_filter(ExtractIndices<PointXYZ>* ptr, Po
 
 EXPORT(void) filters_extractIndices_xyz_setInputCloud(ExtractIndices<PointXYZ>* ptr, PointCloud<PointXYZ>* cloud)
 {
-	ptr->setInputCloud(std::shared_ptr<PointCloud<PointXYZ>>(cloud, [](PointCloud<PointXYZ>*) {}));
+	ptr->setInputCloud(boost_cloud(boost_cloud(), cloud));
 }
 
 EXPORT(void) filters_extractIndices_xyz_setIndices(ExtractIndices<PointXYZ>* ptr, vector<int>* indices)
 {
-	ptr->setIndices(std::shared_ptr<vector<int>>(indices, [](vector<int>*) {}));
+	ptr->setIndices(std::shared_ptr<vector<int>>(std::shared_ptr<vector<int>>(), indices));
 }
 
 EXPORT(void) filters_extractIndices_xyz_setKeepOrganized(ExtractIndices<PointXYZ>* ptr, int value)

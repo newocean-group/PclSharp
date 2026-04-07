@@ -38,7 +38,7 @@ namespace PclSharp.Utils
             dir = IntPtr.Size == 8 ? "x64/" : "x86/";
 
             //by loading the library before dllimport use, we can effectively remap them to wherever we've loaded it from.
-            loader.LoadLibrary($"{dir}{Native.DllName}.dll");
+            loader.LoadLibrary($"{dir}{Native.DllName}");
 
             foreach (var name in AdditionalLibraries)
             {
