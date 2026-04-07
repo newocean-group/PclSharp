@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>PclSharp.Runtime.x64</id>
+        <version>1.0.0</version>
+        <title>PclSharp Native Runtime (x64)</title>
+        <authors>Newocean</authors>
+        <owners>Newocean</owners>
+        <description>
+            Native x64 runtime DLLs for PclSharp: PclSharp.Extern.dll (the C++ PCL bridge) and
+            all PCL/Boost/compression dependency DLLs. A MSBuild .targets file is included that
+            automatically copies these DLLs into the x64\ subdirectory of the consuming project's
+            output folder, matching the path expected by PclSharp's LibraryLoader.
+        </description>
+        <tags>pcl point-cloud native x64 runtime</tags>
+        <!-- No managed dependencies; this is a native-only package -->
+    </metadata>
+    <files>
+        <!-- MSBuild targets: auto-imported by NuGet, copies DLLs to $(OutputPath)x64\ -->
+        <file src="PclSharp.Runtime.x64.targets" target="build\PclSharp.Runtime.x64.targets" />
+
+        <!--
+            Native DLLs from the Release x64 build output.
+            Excludes:
+              - PclSharp.dll / PclSharp.Vis.dll  (managed assemblies, belong in PclSharp package)
+              - System.*.dll                      (managed BCL polyfills, pulled in via NuGet deps)
+            Run a Release|x64 build before packing so all DLLs are present.
+        -->
+        <file src="..\bin\x64\Release\*.dll"
+              target="build\x64"
+              exclude="..\bin\x64\Release\PclSharp.dll;..\bin\x64\Release\PclSharp.Vis.dll;..\bin\x64\Release\System.Numerics.Vectors.dll;..\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.dll;..\bin\x64\Release\System.ValueTuple.dll" />
+    </files>
+</package>

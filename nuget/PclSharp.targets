@@ -1,9 +1,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <NativeLibs Include="$(MSBuildThisFileDirectory)**\*.dll" />
-    <None Include="@(NativeLibs)">
-      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+  <!--
+    PclSharp.targets
+    Auto-imported by NuGet when a project references PclSharp.
+
+    The managed assembly (PclSharp.dll) is delivered via the lib\net48\ folder and
+    referenced automatically by NuGet — no additional build steps are needed here.
+
+    Native DLL deployment is handled entirely by PclSharp.Runtime.x64.targets,
+    which is imported via the PclSharp.Runtime.x64 package dependency.
+  -->
 </Project>

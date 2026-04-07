@@ -34,15 +34,17 @@ namespace PclSharp.Utils
 
             DllLoadUtils loader = new DllLoadUtilsWindows();
 
-            string dir;
-            dir = IntPtr.Size == 8 ? "x64/" : "x86/";
+            // Resolve relative to the assembly location, not the current working directory.
+            string assemblyDir = Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string dir = assemblyDir + Path.DirectorySeparatorChar;
 
             //by loading the library before dllimport use, we can effectively remap them to wherever we've loaded it from.
-            loader.LoadLibrary($"{dir}{Native.DllName}");
+            loader.LoadLibrary(Path.Combine(dir, Native.DllName));
 
             foreach (var name in AdditionalLibraries)
             {
-                var filePath = $"{dir}{name}.dll";
+                var filePath = Path.Combine(dir, name + ".dll");
                 if (File.Exists(filePath))
                     loader.LoadLibrary(filePath);
             }

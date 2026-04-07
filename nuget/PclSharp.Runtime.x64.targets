@@ -1,0 +1,25 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    PclSharp.Runtime.x64.targets
+    Auto-imported by NuGet when a project references PclSharp.Runtime.x64.
+
+    Copies all native DLLs bundled in this package into the $(OutputPath)x64\ subdirectory
+    of the consuming project. PclSharp's LibraryLoader (Utils/LibraryLoader.cs) resolves
+    PclSharp.Extern.dll and its PCL/Boost dependencies from that x64\ subfolder at runtime.
+  -->
+
+  <ItemGroup>
+    <PclSharpNativeDlls Include="$(MSBuildThisFileDirectory)x64\*.dll" />
+  </ItemGroup>
+
+  <Target Name="CopyPclSharpNativeDlls" BeforeTargets="Build">
+    <Copy SourceFiles="@(PclSharpNativeDlls)"
+          DestinationFolder="$(OutputPath)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CleanPclSharpNativeDlls" AfterTargets="Clean">
+    <Delete Files="@(PclSharpNativeDlls->'$(OutputPath)%(Filename)%(Extension)')" />
+  </Target>
+
+</Project>
